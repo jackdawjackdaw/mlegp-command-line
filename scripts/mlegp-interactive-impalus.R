@@ -23,6 +23,7 @@ args <- commandArgs(TRUE) ## get the arguments
 ## will stop otherwise
 #source("mlegp-predict-grid.R")
 library(mlegpInter)
+library(mlegpFULL)
 
 ##
 if(length(args) < 2){
