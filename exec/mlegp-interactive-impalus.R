@@ -21,7 +21,8 @@ args <- commandArgs(TRUE) ## get the arguments
 ##
 ## reads input points from stdin, expects fit.pca$numDim cpts per line
 ## will stop otherwise
-source("mlegp-predict-grid.R")
+#source("mlegp-predict-grid.R")
+library(mlegpInter)
 
 ##
 if(length(args) < 2){
