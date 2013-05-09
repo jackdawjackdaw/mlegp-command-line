@@ -18,7 +18,13 @@ library(mlegpFULL)
 ##
 ## xpt: the prediction location, a vector of length nDim
 ## fit.pca: the trained mlegp list of GP's
-predict.output.at.point <- function(xpt, fit.pca){
+## train.scale.info: the scale and center for the training data 
+## des.scale.info: the scale ance center for the design 
+predict.output.at.point <- function(xpt, fit.pca, train.scale.info=NULL, des.scale.info=NULL){
+  if(!is.null(des.scale.info)){
+    ## we have to scale the xpt
+    xpt <- (xpt - des.scale.info$center) / (des.scale.info$scale)
+  }
   
   xpred.mat <- matrix(xpt, nrow=1, ncol=fit.pca$numDim)
   # intermediate matrix for means
@@ -60,6 +66,14 @@ predict.output.at.point <- function(xpt, fit.pca){
       tVar[i,j] <- sum(ur[i,]*ur[j,] * lam*VprimeSE[,1]**2)
     }
   }
+
+  ## unscale everything correctly
+  if(!is.null(train.scale.info)){
+    predY <- (predY * train.scale.info$scale ) + train.scale.info$center
+    varY <- varY * (tarin.scale.info$scale**2)
+    varMat <- outer(varY, varY) * tVar
+  }
+  
   
   list(mean=predY, var=predYVar, varMat = tVar)
 }
@@ -73,8 +87,8 @@ predict.output.at.point <- function(xpt, fit.pca){
 ##
 ## xpt: the point to predict at, vector of length nDim
 ## fit.pca: list of GP emulators, output from mlegp
-## obs.means.scaled: the mean values of the observable, vector of length nObs 
-## obs.errs.scaled: the observable errors (not variances), vector of length nObs
+## (opt)train.scale.info: the scales and centers for the training data
+## (opt)des.scale.info: the scales and centers for the design data
 ## 
 ## note: the observable means must be scaled & centred in the same way as the original trianing data
 ## the i'th entry in the obs vector should be scaled like this:
@@ -83,9 +97,10 @@ predict.output.at.point <- function(xpt, fit.pca){
 ## the observable errors should be scaled 
 ## err_obs_scaled_i = err_obs_scaled_i / (sigma_training_Y_i)
 ##
-implaus.output.at.point <- function(xpt, fit.pca, obs.means.scaled, obs.errs.scaled){
+implaus.output.at.point <- function(xpt, fit.pca, obs.means, obs.errs, train.scale.info=NULL, des.scale.info=NULL){
+  
   ## make the prediction
-  emu.output <- predict.output.at.point(xpt, fit.pca)
+  emu.output <- predict.output.at.point(xpt, fit.pca, train.scale.info, des.scale.info)
 
   nObsCpts <- dim(fit.pca$UD)[1] ## number of dimensions in the output
   nPca <- fit.pca$numGP ## number of GP's 
@@ -93,16 +108,16 @@ implaus.output.at.point <- function(xpt, fit.pca, obs.means.scaled, obs.errs.sca
   implaus.inde <- 0
   implaus.joint <- matrix(0, nrow=nObsCpts, ncol=nObsCpts)
 
-  V.mat <- emu.output$varMat + diag(obs.errs.scaled**2)
+  V.mat <- emu.output$varMat + diag(obs.errs**2)
   #V.mat <- obs.errs.scaled**2
   #V.mat.inv <- diag(1/diag(obs.errs.scaled**2))
   V.mat.inv <- solve(V.mat)
 
 #  browser()
   
-  implaus.joint <- t(obs.means.scaled - emu.output$mean) %*% V.mat.inv %*% (obs.means.scaled - emu.output$mean)
+  implaus.joint <- t(obs.means - emu.output$mean) %*% V.mat.inv %*% (obs.means - emu.output$mean)
 #  browser()
-  implaus.inde <- (emu.output$mean - obs.means.scaled)**2 / diag(V.mat)
+  implaus.inde <- (emu.output$mean - obs.means)**2 / diag(V.mat)
 
   list(implaus.inde=implaus.inde, implaus.joint=implaus.joint)
 }

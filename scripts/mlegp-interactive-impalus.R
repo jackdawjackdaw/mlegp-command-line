@@ -49,7 +49,13 @@ load(save.file.name)
 ## need to check that there is a "fit.pca" object
 if(!exists("fit.pca")){
   stop(paste("file:", save.file.name, "doesn't contain a fit.pca object"))
-} 
+}
+
+if(!exists(training.scale.info))
+  warning(paste("file:", save.file.name, "doesn't contain a training scale object"))
+if(!exists(des.scale.info))
+  warning(paste("file:", save.file.name, "doesn't contain a design scale object"))
+
 ## how big do we expect the xpoints 
 nparams <- fit.pca$numDim
 cat("# expecting: ", nparams, "coordinate points per input line\n")
@@ -83,7 +89,9 @@ while(length(line <- readLines(f,n=1)) > 0) {
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 
   #pred <- predict.output.at.point(pt, fit.pca)
-  imp <- implaus.output.at.point(pt, fit.pca, obs.means, obs.errs)
+  imp <- implaus.output.at.point(pt, fit.pca, obs.means, obs.errs,
+                                 train.scale.info,
+                                 des.scale.info)
   ## output to file
   cat(imp$implaus.joint, "\n")
   cat(imp$implaus.inde, "\n")

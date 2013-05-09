@@ -15,10 +15,11 @@
 	\arguments{
 		\item{xpt} a vector of length fit.pca$numDim
 		\item{fit.pca} a gp list produced by mlegp
-		\item{obs.means.scaled} a vector of the observation means scaled to
-		the same scalings as the training data used to generate the gp
-		\item{obs.errs.scaled} a vector of the std errors for the
-	observation means.
+		\item{obs.means} a vector of the observation means 
+		\item{obs.errs} a vector of the std errors for the
+		observation means.
+		\item{train.scale.info} the centers and scales for the training data
+		\item{des.scale.info} the centers and scales for the design
 	}
 	\value{
 		a list with components: implaus.inde, implaus.joint
@@ -26,5 +27,10 @@
 		implaus.inde is the implausibility for the individual pca components
 		implaus.joint is the joint implausibility created using the
 		covaraince matrix
+
+		If train.scale.info and des.scale.info are not given than the
+		observables and their errors are taken as being already scaled to
+		match the scales of the design and training data. In this case the
+		predictions will be made as if xpt is unscaled. 
 
 	}

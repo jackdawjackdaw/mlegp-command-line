@@ -19,6 +19,9 @@ args <- commandArgs(TRUE) ## get the arguments
 ## mlegp gp list is saved into "save.file.name" along with information about
 ## the scalings of the design and training data
 ##
+##
+## \todo: check design file has a header (or retry)
+## \todo: allow npca to be set by hand
 library(mlegpFULL)
 
 if(length(args) < 3){
@@ -54,6 +57,7 @@ if(file.exists(save.file.name)){
 ## first load the design data
 des.data.raw <- as.matrix(read.table(design.file.name, header=TRUE))
 des.names <- colnames(des.data.raw)
+## write something to check that the design data is actually numeric
 cat("# deisgn variables: ", des.names, "\n")
 nparams <- dim(des.data.raw)[2]
 ndespts <- dim(des.data.raw)[1]
@@ -84,12 +88,14 @@ training.scale.info$center <- attr(training.scaled, "scaled:center")
 training.scale.info$scale <- attr(training.scaled, "scaled:scale")
 
 ## set the pca number (by hand...)
+## 
 pca.number <- 5
 if(nbins < pca.number){
   pca.number <- nbins
 }
 
 cat("# number principle cpts: ", pca.number, "\n")
+## this is confusing
 pca.importance <- 100 - singularValueImportance(t(training.scaled))[1:pca.number]
 cat("# pca importance: ", pca.importance, "\n")
 

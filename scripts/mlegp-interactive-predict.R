@@ -37,9 +37,16 @@ load(save.file.name)
 if(!exists("fit.pca")){
   stop(paste("file:", save.file.name, "doesn't contain a fit.pca object"))
 } 
+if(!exists(training.scale.info))
+  warning(paste("file:", save.file.name, "doesn't contain a training scale object"))
+if(!exists(des.scale.info))
+  warning(paste("file:", save.file.name, "doesn't contain a design scale object"))
+
 ## how big do we expect the xpoints 
 nparams <- fit.pca$numDim
 cat("# expecting: ", nparams, "coordinate points per input line\n")
+cat("# ngps: ", fit.pca$numGP, "\n")
+cat("# nobs: ", dim(fit.pca$UD)[1], "\n")
 
 ## now loop over stdin
 f <- file("stdin")
@@ -52,7 +59,10 @@ while(length(line <- readLines(f,n=1)) > 0) {
   if(length(pt) < nparams)
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 
-  pred <- predict.output.at.point(pt, fit.pca)
+  ## i'm concerned about the rotation back from principle components...
+  pred <- predict.output.at.point(pt, fit.pca,
+                                  train.scale.info,
+                                  des.scale.info)
   ## simple output, just print everything on a single line
   cat(pred$mean, "\n")
   cat(pred$var, "\n")
