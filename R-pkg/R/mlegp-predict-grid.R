@@ -70,8 +70,8 @@ predict.output.at.point <- function(xpt, fit.pca, train.scale.info=NULL, des.sca
   ## unscale everything correctly
   if(!is.null(train.scale.info)){
     predY <- (predY * train.scale.info$scale ) + train.scale.info$center
-    varY <- varY * (tarin.scale.info$scale**2)
-    varMat <- outer(varY, varY) * tVar
+    predYVar <- predYVar * (train.scale.info$scale**2)
+    tVar <- outer(predYVar, predYVar) * tVar
   }
   
   
