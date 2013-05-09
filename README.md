@@ -34,7 +34,6 @@ TODO
 =====
 
 - add the code for the senstivity analysis to the R lib and a command line interface
-- add support for scaling the data
 - check the design/model-data for actually being numeric and complain appropriately
 
 
