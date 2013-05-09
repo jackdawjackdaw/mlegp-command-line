@@ -78,10 +78,14 @@ cat("# obs.errors: ", obs.errs, "\n")
 f <- file("stdin")
 open(f)
 while(length(line <- readLines(f,n=1)) > 0) {
-  #write(line, stderr()) ## echo!
+#  write(line, stderr()) ## echo!
   # process line
 
   pt <- as.numeric(strsplit(line, " ")[[1]])
+  ## we cut out potential NAs caused by extra whitespace
+  pt <- as.vector(na.omit(pt))
+#  cat("#pt.split: ", pt, "\n")
+
   if(length(pt) < nparams)
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 

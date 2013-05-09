@@ -27,6 +27,13 @@ Installing
 
 ## Build the R Package
 
+`cd ./R-pkg`
+- tell R to build the library and install it
+`R CMD INSTALL .`
+- you can access the lib in R with:
+`library(mlegpInter)`
+but there's basically no need to.
+
 ## Install the Scripts
 
 

@@ -56,6 +56,9 @@ while(length(line <- readLines(f,n=1)) > 0) {
   # process line
 
   pt <- as.numeric(strsplit(line, " ")[[1]])
+  ## we cut out potential NAs caused by extra whitespace
+  pt <- as.vector(na.omit(pt))
+
   if(length(pt) < nparams)
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 
