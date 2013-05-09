@@ -19,7 +19,7 @@ args <- commandArgs(TRUE) ## get the arguments
 ## will stop otherwise
 #source("mlegp-predict-grid.R")
 library(mlegpInter)
-library(mlegpFULL)
+suppressPackageStartupMessages(library(mlegpFULL))
 
 ##
 if(length(args) == 0){
@@ -37,9 +37,9 @@ load(save.file.name)
 if(!exists("fit.pca")){
   stop(paste("file:", save.file.name, "doesn't contain a fit.pca object"))
 } 
-if(!exists(training.scale.info))
+if(!exists("training.scale.info"))
   warning(paste("file:", save.file.name, "doesn't contain a training scale object"))
-if(!exists(des.scale.info))
+if(!exists("des.scale.info"))
   warning(paste("file:", save.file.name, "doesn't contain a design scale object"))
 
 ## how big do we expect the xpoints 
@@ -59,9 +59,14 @@ while(length(line <- readLines(f,n=1)) > 0) {
   if(length(pt) < nparams)
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 
+  if(length(pt) > nparams){
+    warning(paste("read: ", length(pt), " need: ", nparams, "ignoring the excess"))
+    pt <- pt[1:nparams]
+  }
+  
   ## i'm concerned about the rotation back from principle components...
   pred <- predict.output.at.point(pt, fit.pca,
-                                  train.scale.info,
+                                  training.scale.info,
                                   des.scale.info)
   ## simple output, just print everything on a single line
   cat(pred$mean, "\n")

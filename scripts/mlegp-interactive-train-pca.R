@@ -22,7 +22,7 @@ args <- commandArgs(TRUE) ## get the arguments
 ##
 ## \todo: check design file has a header (or retry)
 ## \todo: allow npca to be set by hand
-library(mlegpFULL)
+suppressPackageStartupMessages(library(mlegpFULL))
 
 if(length(args) < 3){
   cat("# run with: <designfile> <trainingfile> <savefile>\n")

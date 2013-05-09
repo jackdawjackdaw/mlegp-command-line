@@ -22,8 +22,8 @@ args <- commandArgs(TRUE) ## get the arguments
 ## reads input points from stdin, expects fit.pca$numDim cpts per line
 ## will stop otherwise
 #source("mlegp-predict-grid.R")
-library(mlegpInter)
-library(mlegpFULL)
+suppressPackageStartupMessages(library(mlegpInter))
+suppressPackageStartupMessages(library(mlegpFULL))
 
 ##
 if(length(args) < 2){
@@ -51,9 +51,9 @@ if(!exists("fit.pca")){
   stop(paste("file:", save.file.name, "doesn't contain a fit.pca object"))
 }
 
-if(!exists(training.scale.info))
+if(!exists("training.scale.info"))
   warning(paste("file:", save.file.name, "doesn't contain a training scale object"))
-if(!exists(des.scale.info))
+if(!exists("des.scale.info"))
   warning(paste("file:", save.file.name, "doesn't contain a design scale object"))
 
 ## how big do we expect the xpoints 
@@ -73,9 +73,6 @@ obs.means <- obs.dat[1,]
 obs.errs <- obs.dat[2,]
 cat("# obs.means: ", obs.means, "\n")
 cat("# obs.errors: ", obs.errs, "\n")
-cat("#############################################\n")
-cat("# WARNING: obs errors and means are assumed to\n# be scaled exactly the same as the mlegp emulator\n# the unscaled values will give *useless* results\n")
-cat("#############################################\n")       
 
 ## now loop over stdin
 f <- file("stdin")
@@ -88,9 +85,16 @@ while(length(line <- readLines(f,n=1)) > 0) {
   if(length(pt) < nparams)
     stop(paste("need",nparams,"coordinates to make a prediction at a single point"))
 
+  if(length(pt) > nparams){
+    warning(paste("read: ", length(pt), " need: ", nparams, "ignoring the excess"))
+    pt <- pt[1:nparams]
+  }
+
+#  cat("read point: ", pt, "\n")
+  
   #pred <- predict.output.at.point(pt, fit.pca)
   imp <- implaus.output.at.point(pt, fit.pca, obs.means, obs.errs,
-                                 train.scale.info,
+                                 training.scale.info,
                                  des.scale.info)
   ## output to file
   cat(imp$implaus.joint, "\n")

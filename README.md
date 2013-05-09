@@ -35,5 +35,5 @@ TODO
 
 - add the code for the senstivity analysis to the R lib and a command line interface
 - check the design/model-data for actually being numeric and complain appropriately
-
+- write up examples and install process
 
