@@ -15,13 +15,13 @@ A small R library (mlegpInter) with some helper functions to make
 predictions from an mlegp GP list (in ./R-pkg)
 
 #### Scripts
-- mlegp-interactive-train.R: train a set of GP's on a multivariate
+- _mlegp-interactive-train.R_: train a set of GP's on a multivariate
   data set with multivariate output.
-- mlegp-interactive-predict.R: make predictions (mean, variance,
+- _mlegp-interactive-predict.R_: make predictions (mean, variance,
   covariance) from the trained GP's produced by
   "mlegp-interactive-train", reads points in parameter space from
   stdin, prints output to stdout
-- mlegp-interactive-implaus.R: output the joint and independent
+- _mlegp-interactive-implaus.R_: output the joint and independent
   implausibility for a given set of trained GP's. Needs a file
   containing the observed means and std.errors.
 
