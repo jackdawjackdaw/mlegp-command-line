@@ -1,4 +1,4 @@
-library(mlegpFULL)
+suppressPackageStartupMessages(library(mlegpFULL))
 ## ccs,
 ## testing the mlegp predict method
 ##
@@ -21,10 +21,13 @@ library(mlegpFULL)
 ## train.scale.info: the scale and center for the training data 
 ## des.scale.info: the scale ance center for the design 
 predict.output.at.point <- function(xpt, fit.pca, train.scale.info=NULL, des.scale.info=NULL){
+
   if(!is.null(des.scale.info)){
     ## we have to scale the xpt
-    xpt <- (xpt - des.scale.info$center) / (des.scale.info$scale)
-  }
+#    cat("# xpt: ", xpt, "\n")
+    xpt <- (xpt - as.vector(des.scale.info$center)) / (as.vector(des.scale.info$scale))
+#    cat("# xpt: ", xpt, "\n")
+  } 
   
   xpred.mat <- matrix(xpt, nrow=1, ncol=fit.pca$numDim)
   # intermediate matrix for means
@@ -108,12 +111,13 @@ implaus.output.at.point <- function(xpt, fit.pca, obs.means, obs.errs, train.sca
   implaus.inde <- 0
   implaus.joint <- matrix(0, nrow=nObsCpts, ncol=nObsCpts)
 
+#  cat("# mean: ", emu.output$mean, "\n")
+#  cat("# var: ", emu.output$var, "\n")
+  
   V.mat <- emu.output$varMat + diag(obs.errs**2)
   #V.mat <- obs.errs.scaled**2
   #V.mat.inv <- diag(1/diag(obs.errs.scaled**2))
   V.mat.inv <- solve(V.mat)
-
-#  browser()
   
   implaus.joint <- t(obs.means - emu.output$mean) %*% V.mat.inv %*% (obs.means - emu.output$mean)
 #  browser()
