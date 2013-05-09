@@ -52,7 +52,7 @@ if(file.exists(save.file.name)){
 }
 
 ## first load the design data
-des.data.raw <- as.matrix(read.table(design.file.name))
+des.data.raw <- as.matrix(read.table(design.file.name, header=TRUE))
 des.names <- colnames(des.data.raw)
 cat("# deisgn variables: ", des.names, "\n")
 nparams <- dim(des.data.raw)[2]
