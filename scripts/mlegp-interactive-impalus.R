@@ -75,11 +75,12 @@ cat("# obs.means: ", obs.means, "\n")
 cat("# obs.errors: ", obs.errs, "\n")
 
 ## now loop over stdin
-f <- file("stdin")
+## does setting this blocking matter? yes
+f <- file("stdin", blocking=TRUE)
 open(f)
 while(length(line <- readLines(f,n=1)) > 0) {
 #  write(line, stderr()) ## echo!
-  # process line
+# process line
 
   pt <- as.numeric(strsplit(line, " ")[[1]])
   ## we cut out potential NAs caused by extra whitespace
