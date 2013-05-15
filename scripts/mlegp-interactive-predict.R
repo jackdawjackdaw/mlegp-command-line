@@ -1,3 +1,4 @@
+#!/usr/bin/env Rscript
 args <- commandArgs(TRUE) ## get the arguments
 ## ccs, cec24@phy.duke.edu
 ##

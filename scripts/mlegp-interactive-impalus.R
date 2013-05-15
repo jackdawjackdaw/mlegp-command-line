@@ -1,4 +1,7 @@
-args <- commandArgs(TRUE) ## get the arguments
+#!/usr/bin/env Rscript
+suppressPackageStartupMessages(library("optparse"))
+
+#args <- commandArgs(TRUE) ## get the arguments
 ## ccs, cec24@phy.duke.edu
 ##
 ##
@@ -25,19 +28,32 @@ args <- commandArgs(TRUE) ## get the arguments
 suppressPackageStartupMessages(library(mlegpInter))
 suppressPackageStartupMessages(library(mlegpFULL))
 
+option.list <- list(
+  make_option(c("-v", "--verbose"), action="store_true", default=FALSE, help="Print extra output"))
+
+parser <- OptionParser(usage="%prog [options] savefile obsfile", option_list=option.list)
+args.in <- parse_args(parser, positional_arguments=TRUE)
+opt <- args.in$options
+#args <- parse <- args(parser, 
+#opt <- parse_args(OptionParser(option_list=option.list))
+args <- strsplit(args.in$args, " ")
+#cat(class(args), "\n")
+#cat(args[[1]], "\n")
+
+
 ##
 if(length(args) < 2){
   cat("# invocation: Rscript ./mleg-interactive-implaus <mlegp-save-file> <obs-dat-file>\n")
   stop(" run with path to mlegp save file and observable data file\nreads points in parameter space from stdin\noutputs joint-implaus and inde implaus ")
 }
 
-save.file.name <- args[1]
+save.file.name <- args[[1]]
 cat("# reading mlegp data from: ", save.file.name, "\n");
 if(!file.exists(save.file.name)){
   stop(paste(" cannot open", save.file.name))
 }
 
-obs.file.name <- args[2]
+obs.file.name <- args[[2]]
 cat("# reading observable data from: ", obs.file.name, "\n");
 if(!file.exists(obs.file.name)){
   stop(paste(" cannot open", obs.file.name))
@@ -104,4 +120,9 @@ while(length(line <- readLines(f,n=1)) > 0) {
   ## output to file
   cat(imp$implaus.joint, "\n")
   cat(imp$implaus.inde, "\n")
+  ## debug info to stderr
+  if(opt$verbose){
+    write(paste(imp$implaus.joint, paste(pt, sep=" ", collapse=" ")), stderr())
+  }
+  
 }

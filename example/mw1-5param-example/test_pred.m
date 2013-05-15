@@ -18,23 +18,23 @@ nheader = 6; %% number of header lines
 for count = 1:3
 fprintf(fidIn, '%f %f %f %f %f\n', testPoints(count,:).*sigs + means);
     if(count == 1) %% skip the header lines the first time
-         'skipping header'
+%         'skipping header'
       for c2=1:nheader
         hline = fgetl(fidOut);
         disp(hline)
-        end
+      end
      end%     
 impJointLine = fscanf(fidOut, '%f',1);
 impSingleLine = fscanf(fidOut, '%f', 6);
-disp(impJointLine)
-disp(impSingleLine)
+%disp(impSingleLine)
+%disp(impJointLine)
 fprintf('%d %g\n', count, impJointLine); 
 end
 
-fprintf(fidIn, 'EOF\n')
+fprintf(fidIn, 'EOF\n');
 
-fclose(fidOut)
-fclose(fidIn)
+fclose(fidOut);
+fclose(fidIn);
 
 % 
 % %vals = fgetl(fid);
