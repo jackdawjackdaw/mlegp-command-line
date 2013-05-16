@@ -1,6 +1,5 @@
 #!/usr/bin/env Rscript
 suppressPackageStartupMessages(library("optparse"))
-
 #args <- commandArgs(TRUE) ## get the arguments
 ## ccs, cec24@phy.duke.edu
 ##

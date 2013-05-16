@@ -29,17 +29,22 @@ Depends
 =======
 
 - R (tested on 2.15.2, 2.15.3), Rscript
-- R packages: mlegpFull (get this from the maintainer), adapt
+- R packages: mlegpFull (get this from the maintainer), adapt, optparse
 
 
 Installing
 =========
 
-### Build the R Package
+### Install the R Package
+
+- The library depends upon the following R packages: optparse, mlegp, adapt, mlegpFull
+  the latter can be obtained directly from the mlegp maintainer. You can install any missing dependencies
+  via R by using the `install.packages` command.
 
 `cd ./R-pkg`
 - tell R to build the library and install it
 `R CMD INSTALL .`
+  
 - you can access the lib in R with:
 `library(mlegpInter)`
 but there's basically no need to.
@@ -49,11 +54,14 @@ but there's basically no need to.
 - copy the contents of scripts to somewhere in your path, or leave
   them where they are.
 
+Usage
+=====
+
+- see /example/mw1-5param-example/README.md for a full example
 
 TODO
 =====
 
 - add the code for the senstivity analysis to the R lib and a command line interface
 - check the design/model-data for actually being numeric and complain appropriately
-- write up examples and install process
 

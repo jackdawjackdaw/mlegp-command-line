@@ -4,9 +4,9 @@ Title: Run mlegp from the command line
 Version: 0.0.1
 Date: 2013-05-05
 Author: C.Coleman-Smith
-Depends: optparse
+Depends: optparse, mlegp, adapt
 Maintainer: C.Coleman-Smith <cec24@phy.duke.edu>
-Suggests: mlegpFULL,adapt
+Suggests: mlegpFULL
 Description: Run the wonderful mlegp package from the command line using rscript
 License: MIT
 SystemRequirements: 

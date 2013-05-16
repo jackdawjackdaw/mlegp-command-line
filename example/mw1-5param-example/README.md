@@ -23,7 +23,7 @@ the save file.
 
 After installing the R library, 
 
-`Rscript ../../scripts/mlegp-interactive-train-pca.R ./design_MW1.dat ./combined-training.dat ./save-file.dat`
+`../../scripts/mlegp-interactive-train-pca.R ./design_MW1.dat ./combined-training.dat ./save-file.dat`
 
 This will call the estimation process in MLEGP, essentially training a
 GP with design data from "./design_MW1.dat" and training data from
@@ -41,7 +41,7 @@ Once you've trained the gp the mean, variance and covariance can be
 interactively sampled with 'mlegp-interactive-predict.R'. This takes
 the path to a save file made by 'mlegp-interactive-train-pca.R' as the first argument.
 
-`Rscript ../../scripts/mlep-interactive-predict.R ./save-file.dat`
+`../../scripts/mlep-interactive-predict.R ./save-file.dat`
 
 points to sample are read from stdin, the emulated mean, variance and covariance matrix are printed to stdout (on separate lines)
 
@@ -55,8 +55,12 @@ observed data file should have as many columns as there are
 observables in the training data and two rows. The first row should be
 the observed mean values and the second row should be the std errors.
 
-`Rscript ../../scripts/mleg-interactive-implaus.R ./save-file.dat ./obs-data.txt`
+`../../scripts/mleg-interactive-implaus.R ./save-file.dat ./obs-data.txt`
 
 points to sample are again read from stdin, the joint implaus and the
 independen implausibilities are written on separate lines.
 
+The interactive-implaus script takes an optional argument (-v,
+--verbose), before the file paths. This turns on echoing of the
+joint-implaus and the point in the design path to stderr. This is
+useful for debugging while directly using the output. 
