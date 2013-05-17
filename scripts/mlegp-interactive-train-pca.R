@@ -96,15 +96,23 @@ if(nbins < pca.number){
 }
 
 cat("# number principle cpts: ", pca.number, "\n")
+if(nbins > 1 ){
 ## this is confusing
-pca.importance <- 100 - singularValueImportance(t(training.scaled))[1:pca.number]
-cat("# pca importance: ", pca.importance, "\n")
+  pca.importance <- 100 - singularValueImportance(t(training.scaled))[1:pca.number]
+  cat("# pca importance: ", pca.importance, "\n")
+}
 
 ## now actually train everything
 bfgs.seed <- round(runif(1) * .Machine$integer.max) ## stupid way to actually sample on 1..IntMax
-fit.pca <- mlegp(des.scaled, t(training.scaled), min.nugget=1e-5, nugget=1e-1,
-                 PC.num=pca.number,
-                 param.names=des.names, seed=bfgs.seed)
+if(nbins > 1) {
+  fit.pca <- mlegp(des.scaled, t(training.scaled), min.nugget=1e-5, nugget=1e-1,
+                   PC.num=pca.number,
+                   param.names=des.names, seed=bfgs.seed)
+} else {
+  fit.pca <- mlegp(des.scaled, training.scaled, min.nugget=1e-5, nugget=1e-1,
+                   param.names=des.names, seed=bfgs.seed)
+}
+  
 ## now save it
 save(fit.pca, des.scale.info, training.scale.info, file=save.file.name)
 
