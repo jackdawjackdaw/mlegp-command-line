@@ -1,3 +1,4 @@
+suppressPackageStartupMessages(library(adapt))
 suppressPackageStartupMessages(library(mlegpFULL))
 ## ccs,
 ## testing the mlegp predict method
@@ -29,45 +30,52 @@ predict.output.at.point <- function(xpt, fit.pca, train.scale.info=NULL, des.sca
 #    cat("# xpt: ", xpt, "\n")
   } 
   
-  xpred.mat <- matrix(xpt, nrow=1, ncol=fit.pca$numDim)
+  if(class(fit.pca) == "gp.list"){
+    xpred.mat <- matrix(xpt, nrow=1, ncol=fit.pca$numDim)
   # intermediate matrix for means
-  Vprime <- matrix(0, fit.pca$numGP, 1)
-  VprimeSE <- matrix(0, fit.pca$numGP, 1)
-  for(i in 1:fit.pca$numGP){
-    temp <- predict(fit.pca[[i]], newData = xpt, se.fit=TRUE)
-    Vprime[i,] <- temp$fit
-    VprimeSE[i,] <- temp$se.fit
-  }
-  predY = fit.pca$UD %*% Vprime
-  ## these are standard deviations (square-roots of variances)
-
-  ## we want to make the cov matrix so we can compute the implaus
-  nObsCpts <- dim(fit.pca$UD)[1]
-  nPca <- fit.pca$numGP
-  ## the observations matrix is SVD"d to : Y = UD V
-  ##
-  VprimeOrig <- matrix(0,nrow=fit.pca$numObs, ncol=nPca)
-  for(i in 1:nPca){
-    VprimeOrig[,i] <- fit.pca[[i]]$Z
-  }
-  Yrecon <- fit.pca$UD %*% t(VprimeOrig)
-  s = svd(Yrecon)
-
-  
-  #predYVar = fit.pca$UD %*% (VprimeSE**2)
-
-  ur <- s$u[,1:nPca]
-  lam <- s$d[1:nPca]
-  
-  predYVar <- rep(NA, nObsCpts)
-  for(i in 1:nObsCpts)
-    predYVar[i] <- sum(ur[i,]**2 * lam * (VprimeSE[,1]**2))
-  
-  tVar <- matrix(0, nrow=nObsCpts, ncol=nObsCpts)
-  for(i in 1:nObsCpts){
-    for(j in 1:nObsCpts){
-      tVar[i,j] <- sum(ur[i,]*ur[j,] * lam*VprimeSE[,1]**2)
+    Vprime <- matrix(0, fit.pca$numGP, 1)
+    VprimeSE <- matrix(0, fit.pca$numGP, 1)
+    for(i in 1:fit.pca$numGP){
+      temp <- predict(fit.pca[[i]], newData = xpt, se.fit=TRUE)
+      Vprime[i,] <- temp$fit
+      VprimeSE[i,] <- temp$se.fit
     }
+    predY = fit.pca$UD %*% Vprime
+    
+    ## these are standard deviations (square-roots of variances)
+
+    ## we want to make the cov matrix so we can compute the implaus
+    nObsCpts <- dim(fit.pca$UD)[1]
+    nPca <- fit.pca$numGP
+    ## the observations matrix is SVD"d to : Y = UD V
+    ##
+    VprimeOrig <- matrix(0,nrow=fit.pca$numObs, ncol=nPca)
+    for(i in 1:nPca){
+      VprimeOrig[,i] <- fit.pca[[i]]$Z
+    }
+    Yrecon <- fit.pca$UD %*% t(VprimeOrig)
+    s = svd(Yrecon)
+                                        #predYVar = fit.pca$UD %*% (VprimeSE**2)
+    ur <- s$u[,1:nPca]
+    lam <- s$d[1:nPca]
+    
+    predYVar <- rep(NA, nObsCpts)
+    for(i in 1:nObsCpts)
+      predYVar[i] <- sum(ur[i,]**2 * lam * (VprimeSE[,1]**2))
+    
+    tVar <- matrix(0, nrow=nObsCpts, ncol=nObsCpts)
+    for(i in 1:nObsCpts){
+      for(j in 1:nObsCpts){
+        tVar[i,j] <- sum(ur[i,]*ur[j,] * lam*VprimeSE[,1]**2)
+      }
+    }
+  }
+  else {
+    ## single observable
+    temp <- predict(fit.pca, newData=xpt, se.fit=TRUE)
+    predY <- temp$fit
+    predYVar <- temp$se.fit
+    tVar <- 1
   }
 
   ## unscale everything correctly
@@ -76,7 +84,6 @@ predict.output.at.point <- function(xpt, fit.pca, train.scale.info=NULL, des.sca
     predYVar <- predYVar * (train.scale.info$scale**2)
     tVar <- outer(predYVar, predYVar) * tVar
   }
-  
   
   list(mean=predY, var=predYVar, varMat = tVar)
 }
@@ -105,7 +112,11 @@ implaus.output.at.point <- function(xpt, fit.pca, obs.means, obs.errs, train.sca
   ## make the prediction
   emu.output <- predict.output.at.point(xpt, fit.pca, train.scale.info, des.scale.info)
 
-  nObsCpts <- dim(fit.pca$UD)[1] ## number of dimensions in the output
+  if(class(fit.pca)=="gp.list"){
+    nObsCpts <- dim(fit.pca$UD)[1] ## number of dimensions in the output
+  } else { ## single observation
+    nObsCpts <-  1
+  }
   nPca <- fit.pca$numGP ## number of GP's 
     
   implaus.inde <- 0
@@ -113,15 +124,19 @@ implaus.output.at.point <- function(xpt, fit.pca, obs.means, obs.errs, train.sca
 
 #  cat("# mean: ", emu.output$mean, "\n")
 #  cat("# var: ", emu.output$var, "\n")
-  
-  V.mat <- emu.output$varMat + diag(obs.errs**2)
+  if(class(fit.pca) == "gp.list"){
+    V.mat <- emu.output$varMat + diag(obs.errs**2)
   #V.mat <- obs.errs.scaled**2
   #V.mat.inv <- diag(1/diag(obs.errs.scaled**2))
-  V.mat.inv <- solve(V.mat)
-  
-  implaus.joint <- t(obs.means - emu.output$mean) %*% V.mat.inv %*% (obs.means - emu.output$mean)
+    V.mat.inv <- solve(V.mat)
+
+    implaus.joint <- t(obs.means - emu.output$mean) %*% V.mat.inv %*% (obs.means - emu.output$mean)
 #  browser()
-  implaus.inde <- (emu.output$mean - obs.means)**2 / diag(V.mat)
+    implaus.inde <- (emu.output$mean - obs.means)**2 / diag(V.mat)
+  } else {
+    implaus.joint <- implaus.inde <- (emu.output$mean - obs.means)**2 / (emu.output$var + obs.errs**2)
+  }
+  
 
   list(implaus.inde=implaus.inde, implaus.joint=implaus.joint)
 }

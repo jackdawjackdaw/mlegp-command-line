@@ -78,7 +78,11 @@ cat("# expecting: ", nparams, "coordinate points per input line\n")
 
 ## now load the observable data
 obs.dat <- as.matrix(read.table(obs.file.name))
-nObsCpts <- dim(fit.pca$UD)[1]
+if(class(fit.pca)=="gp.list"){
+  nObsCpts <- dim(fit.pca$UD)[1]
+} else {
+  nObsCpts <- 1
+}
 if(dim(obs.dat)[1] < 2)
   stop(paste("not enough rows (mean, error), in observable file:", obs.dat))
 if(dim(obs.dat)[2] < nObsCpts)

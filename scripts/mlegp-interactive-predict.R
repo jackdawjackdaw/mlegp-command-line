@@ -21,6 +21,8 @@ args <- commandArgs(TRUE) ## get the arguments
 #source("mlegp-predict-grid.R")
 library(mlegpInter)
 suppressPackageStartupMessages(library(mlegpFULL))
+suppressPackageStartupMessages(library(adapt))
+suppressPackageStartupMessages(library(mlegp))
 
 ##
 if(length(args) == 0){
@@ -46,8 +48,13 @@ if(!exists("des.scale.info"))
 ## how big do we expect the xpoints 
 nparams <- fit.pca$numDim
 cat("# expecting: ", nparams, "coordinate points per input line\n")
-cat("# ngps: ", fit.pca$numGP, "\n")
-cat("# nobs: ", dim(fit.pca$UD)[1], "\n")
+if(class(fit.pca) == "gp.list"){
+  cat("# ngps: ", fit.pca$numGP, "\n")
+  cat("# nobs: ", dim(fit.pca$UD)[1], "\n")
+} else {
+  cat("# ngps: ", 1, "\n")
+  cat("# nobs: ", 1, "\n")
+}  
 
 ## now loop over stdin
 f <- file("stdin")
