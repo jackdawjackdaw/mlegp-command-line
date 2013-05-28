@@ -107,10 +107,9 @@ main.pca.table.true <- plot.main.effects.true(fit.pca, train.scale.info=training
 
 The resulting table can be saved to disk etc. 
 
-
 TODO
 =====
 
-- add the code for the senstivity analysis to the R lib and a command line interface
+- add a command line interface to the SA code
 - check the design/model-data for actually being numeric and complain appropriately
 
