@@ -59,6 +59,51 @@ Usage
 
 - see /example/mw1-5param-example/README.md for a full example
 
+Plotting Main Effects
+=====
+
+If you've trained a multivariate GP using the
+_melgp-interactive-train_ script you can now make plots of the main
+effects in the true and pca basis (of the outputs). There's no direct
+command line support for this but it's easy to do from an R
+terminal. The functions provided by this library just wrap the
+mlegpFull
+
+- _plot.main.effects.pca_ plots the effects in the pca basis
+- _plot.main.effects.true_ plots the effects in the true basis
+
+both functions also return a list of matrices of the main effects for each
+observable that can be written to file etc.
+
+
+Suppose that you've saved the data from the training process into
+"trained-emu-save.dat", to plot the main effects in the PCA basis
+do the following in an R process:
+
+`library(mlegpFull)`
+`library(mlegpInter)`
+`load("trained-emu-save.dat")`
+`main.pca.table <- plot.main.effects.pca(fit.pca)`
+
+This will produce a set of graph panels on the default device and
+main.pca.table will be init to a list of the main effects. Each list
+item is a matrix of the effects for a given PCA observable with the
+first column as the arbitrary index on the parameter space and then
+each column giving the predicted main effect for that parameter.
+
+The process is the same for plotting the main effects in the *true*
+basis but one needs to supply the training scale info. This saved by
+default as `training.scale.info` in the file created by the mlegp
+fitting process.
+
+`library(mlegpFull)`
+`library(mlegpInter)`
+`load("trained-emu-save.dat")`
+`main.pca.table.true <- plot.main.effects.true(fit.pca, train.scale.info=training.scale.info)`
+
+The resulting table can be saved to disk etc. 
+
+
 TODO
 =====
 
