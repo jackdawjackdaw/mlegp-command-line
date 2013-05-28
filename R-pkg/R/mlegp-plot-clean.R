@@ -110,14 +110,16 @@ plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE
     ## now make a plot
     for(j in 1:nparams){
       if(j==1){
-        plot(xs, main.effects[[i]]$mat[,j], col=colvec[j], lwd=2, lty=j, ylim=range(main.effects[[i]]$mat)+0.2*range(main.effects[[i]]$mat),
+        plot(xs, main.effects[[i]]$mat[,j], col=colvec[j], lwd=2, lty=j,
+             ylim=range(main.effects[[i]]$mat)+0.2*range(main.effects[[i]]$mat),
              ylab="predicted output (arb)", xlab="param value (arb)", type="l")
       }
       lines(xs, main.effects[[i]]$mat[,j], col=colvec[j], lwd=2, lty=j)
       if(i==1){ ## only plot the legend once
-        legend("bottomright", desNames, col=colvec, lwd=rep(2, nparams), lty=1:nparams)
+        legend("bottomright", fit.pca$params,
+               col=colvec, lwd=rep(2, nparams), lty=1:nparams)
       }
-      title(main=paste("(true) obs.", i,mwString.Up))
+      title(main=paste("(true) obs.", i))
     }
   }
     
