@@ -83,7 +83,8 @@ do the following in an R process:
 ```library(mlegpFull)
 library(mlegpInter)
 load("trained-emu-save.dat")
-main.pca.table <- plot.main.effects.pca(fit.pca)```
+main.pca.table <- plot.main.effects.pca(fit.pca)
+```
 
 This will produce a set of graph panels on the default device and
 main.pca.table will be init to a list of the main effects. Each list
@@ -99,7 +100,8 @@ fitting process.
 ```library(mlegpFull)
 library(mlegpInter)
 load("trained-emu-save.dat")
-main.pca.table.true <- plot.main.effects.true(fit.pca, train.scale.info=training.scale.info)```
+main.pca.table.true <- plot.main.effects.true(fit.pca, train.scale.info=training.scale.info)
+```
 
 The resulting table can be saved to disk etc. 
 
