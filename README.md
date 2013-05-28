@@ -80,7 +80,8 @@ Suppose that you've saved the data from the training process into
 "trained-emu-save.dat", to plot the main effects in the PCA basis
 do the following in an R process:
 
-```library(mlegpFull)
+```
+library(mlegpFull)
 library(mlegpInter)
 load("trained-emu-save.dat")
 main.pca.table <- plot.main.effects.pca(fit.pca)
@@ -97,7 +98,8 @@ basis but one needs to supply the training scale info. This saved by
 default as `training.scale.info` in the file created by the mlegp
 fitting process.
 
-```library(mlegpFull)
+```
+library(mlegpFull)
 library(mlegpInter)
 load("trained-emu-save.dat")
 main.pca.table.true <- plot.main.effects.true(fit.pca, train.scale.info=training.scale.info)
