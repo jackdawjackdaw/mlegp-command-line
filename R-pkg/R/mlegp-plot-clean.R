@@ -53,7 +53,7 @@ plot.main.effects.pca <- function(fit.list, nobs=5, file.name.stub="main-effects
 ## returns all the main effects in the original space
 ## also makes a nice graph of the main effects for each "true" output
 ## 
-plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE, ylim=c(-3,3))
+plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE, title.stub="true obs: ",  ylim=c(-3,3))
 {
 
   if(class(fit.pca)!="gp.list"){
@@ -92,17 +92,21 @@ plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE
     ## now project back the main effects for this i'th parameter
 
     ymain.eff <- t(fit.pca$UD %*% t(dat))
-    if(!is.null(train.scale.info)){ ## unscale correctly
-      ymain.eff <- ymain.eff * train.scale.info$scale + train.scale.info$center
-    }
-    
+
     #main.effects[[i]] <- ymain.eff ## this is a confusing thing to return
     for(j in 1:nobs.true)  ## fill in the effect of the i'th parameter for each observable
       main.effects[[j]]$mat[,i] <- ymain.eff[,j]
   }
-
+  
   ##browser()
 
+  if(!is.null(train.scale.info)){ ## unscale correctly
+    for(i in 1:nobs.true){
+      #browser()
+      main.effects[[i]]$mat <- main.effects[[i]]$mat * train.scale.info$scale[i] + train.scale.info$center[i]
+    }
+  }
+  
   ## plot everything
   ncol <- min(3, 1+round(nobs.true/2)) ## try and guess the number of cols we need
   par(mfrow=c(2,ncol))
@@ -112,14 +116,17 @@ plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE
       if(j==1){
         plot(xs, main.effects[[i]]$mat[,j], col=colvec[j], lwd=2, lty=j,
              ylim=range(main.effects[[i]]$mat)+0.2*range(main.effects[[i]]$mat),
-             ylab="predicted output (arb)", xlab="param value (arb)", type="l")
+             ylab="predicted output", xlab="param value (arb)", type="l")
       }
+
       lines(xs, main.effects[[i]]$mat[,j], col=colvec[j], lwd=2, lty=j)
+
+      
       if(i==1){ ## only plot the legend once
         legend("bottomright", fit.pca$params,
                col=colvec, lwd=rep(2, nparams), lty=1:nparams)
       }
-      title(main=paste("(true) obs.", i))
+      title(main=paste(title.stub, i))
     }
   }
     
