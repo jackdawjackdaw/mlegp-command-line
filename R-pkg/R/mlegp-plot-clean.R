@@ -2,6 +2,8 @@
 
 ## plot the main effects in the PCA space
 ## calls plot.decomp.helper
+##
+## \todo: return a table instead
 plot.main.effects.pca <- function(fit.list, nobs=5, file.name.stub="main-effects-", ylim.in=c(-1,1)){
 
   ## helper routine to plot main effects in a not horrible way
@@ -91,10 +93,8 @@ plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE
 
     ymain.eff <- t(fit.pca$UD %*% t(dat))
     if(!is.null(train.scale.info)){ ## unscale correctly
-      browser()
       ymain.eff <- ymain.eff * train.scale.info$scale + train.scale.info$center
     }
-      
     
     #main.effects[[i]] <- ymain.eff ## this is a confusing thing to return
     for(j in 1:nobs.true)  ## fill in the effect of the i'th parameter for each observable
