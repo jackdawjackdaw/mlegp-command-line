@@ -37,6 +37,9 @@ plot.main.effects.pca <- function(fit.list, nobs=5, file.name.stub="main-effects
     nobs = 1
   }
 
+  
+  main.effects <- vector("list", nobs)
+  
   for(i in 1:nobs){
     if(i == 1){
       d <- plot.decomp.helper(fit.list[[i]], fit.list$params, plot.ylim=ylim.in)
@@ -44,16 +47,18 @@ plot.main.effects.pca <- function(fit.list, nobs=5, file.name.stub="main-effects
       d <- plot.decomp.helper(fit.list[[i]], fit.list$params, plot.leg=FALSE, plot.ylim=ylim.in)
     }
     title(main=paste("obs.", i, sep=""))
-    file.name <- paste(file.name.stub,i,".dat", sep="")
-    write.table(d, file=file.name, row.names=FALSE)
+    #file.name <- paste(file.name.stub,i,".dat", sep="")
+    #write.table(d, file=file.name, row.names=FALSE)
+    main.effects[[i]]$effects <- d
   }
+  invisible(main.effects)
 }
 
 
 ## returns all the main effects in the original space
 ## also makes a nice graph of the main effects for each "true" output
 ## 
-plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE, title.stub="true obs: ",  ylim=c(-3,3))
+plot.main.effects.true <- function(fit.pca, train.scale.info=NULL, plot.leg=TRUE, title.stub="true obs: ")
 {
 
   if(class(fit.pca)!="gp.list"){

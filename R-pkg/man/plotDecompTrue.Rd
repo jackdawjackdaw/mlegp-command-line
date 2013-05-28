@@ -20,5 +20,5 @@ title.stub="true obs:")
 	Plots of the main effects in the *true basis* are drawn to the
 	default device.
 
-	Returns a list of the main effects in the rotated basis
+	Returns a list of the main effects in the true basis
 }

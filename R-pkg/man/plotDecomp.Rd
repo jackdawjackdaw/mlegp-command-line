@@ -18,11 +18,10 @@
 	\item{ylim.in} The ylimits for the plots, defaults to -1 to 1
 }
 \value{
-	Tables of the main effects for each observable are written out to
-	disk.
-
 	Plots of the main effects in the *PCA basis* are drawn to the
 	default device.
+
+	Returns a list of the main effects in the PCA basis
 }
 \seealso{
 	mlegpFULL:plotMainEffects
